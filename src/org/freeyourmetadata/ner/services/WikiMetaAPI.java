@@ -32,6 +32,7 @@ public class WikiMetaAPI extends NERServiceBase {
     private final static URI DOCUMENTATIONURI = createUri("http://www.wikimeta.com/api.html");
     private final static String[] SERVICESETTINGS = { "API key" };
     private final static String[] EXTRACTIONSETTINGS = { "Language", "Span", "Treshold" };
+    private final static String WIKIMETAURL = "http://wikimeta.com/wapi/display.pl";
     
     /**
      * Creates a new WikiMeta service connector
@@ -75,7 +76,7 @@ public class WikiMetaAPI extends NERServiceBase {
     	}
         final JSONArray document = response.getJSONArray("document");
         
-        final String lang = getExtractionSettingDefault("Language");
+        final String searchLang = getExtractionSettingDefault("Language");
         
         // Find all entities
         final JSONArray entities = document.getJSONObject(2).getJSONArray("Named Entities");
@@ -83,10 +84,7 @@ public class WikiMetaAPI extends NERServiceBase {
         for (int i = 0; i < entities.length(); i++) {
             final JSONObject entity = entities.getJSONObject(i);
             final String entityText = entity.getString("EN");
-            //final String type = entity.getString("type");
-            final URI uri = createUri(entity.getString("URI"));
-            //final URI linkedData = createUri(entity.getString("LINKEDDATA"));
-            //final String position = entity.getString("position");
+            final URI uri = createWikiMetaUri(entity.getString("URI"), entityText, searchLang);
             final Double score = entity.getString("confidenceScore").equals("") ? 0d : Double.parseDouble(entity.getString("confidenceScore"));
 
             // Put it in an array, ya never know
@@ -97,5 +95,13 @@ public class WikiMetaAPI extends NERServiceBase {
         }
         
         return results.toArray(new NamedEntity[results.size()]);
+    }
+    
+    private URI createWikiMetaUri(final String entityUri, final String entityText, final String searchLang) {
+    	if(entityUri.equals("NORDF")) {
+    		return createUri(WIKIMETAURL + "?query=" + entityText + "&search=" + searchLang);
+    	}
+    	
+    	return createUri(entityUri);
     }
 }

@@ -2,6 +2,8 @@ package org.freeyourmetadata.ner.services;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.json.JSONException;
 import org.json.JSONTokener;
@@ -34,7 +36,7 @@ public class WikiMetaAPITest extends APITest {
     }
 
 	@Test
-	public void parseExtractionResponseEntityValid() {
+	public void parseExtractionResponseEntityValid() throws URISyntaxException {
 		InputStream stream = WikiMetaAPITest.class.getResourceAsStream("/wikimeta.json");
 		JSONTokener tokener = new JSONTokener(new InputStreamReader(stream));
 		NamedEntity[] result = null;
@@ -44,9 +46,17 @@ public class WikiMetaAPITest extends APITest {
 			Assert.fail();
 		}
 		Assert.assertNotNull(result);
-		Assert.assertEquals(result.length, 1);
+		Assert.assertEquals(result.length, 2);
 		Assert.assertEquals(result[0].getDisambiguations().length, 1);
+		Assert.assertEquals(result[0].getDisambiguations()[0].getLabel(), "Antibes");		
 		Assert.assertEquals(result[0].getDisambiguations()[0].getScore(), new Double("826.85"));
+		Assert.assertEquals(result[0].getDisambiguations()[0].getUri(), new URI("http://wikimeta.com/wapi/display.pl?query=Antibes&search=FR"));
+		Assert.assertEquals(result[1].getDisambiguations().length, 1);
+		Assert.assertEquals(result[1].getDisambiguations()[0].getLabel(), "Test");
+		Assert.assertEquals(result[1].getDisambiguations()[0].getScore(), new Double("826.85"));
+		Assert.assertEquals(result[1].getDisambiguations()[0].getUri(), new URI("http://wikimeta.com/wapi/display.pl?query=Test&search=EN"));
+
+
 
 	}
 	

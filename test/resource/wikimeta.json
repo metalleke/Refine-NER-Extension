@@ -35,7 +35,15 @@
                "LINKEDDATA":"http://www.dbpedia.org/resource/Antibes",
                "position":"2",
                "confidenceScore":"826.85"
-            }
+            },
+            {
+                "EN":"Test",
+                "type":"loc.admi",
+                "URI":"NORDF",
+                "LINKEDDATA":"http://www.dbpedia.org/resource/Antibes",
+                "position":"2",
+                "confidenceScore":"826.85"
+             }
          ]
       }
    ]
